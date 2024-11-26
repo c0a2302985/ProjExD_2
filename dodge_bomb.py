@@ -76,24 +76,24 @@ def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
     戻り値：移動方向に応じたこうかとんの画像
     """
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
-    angle = 0
     if (0 <= sum_mv[0]):
         kk_img = pg.transform.flip(kk_img, True, False)
-        if (sum_mv[0] == 0):
-            if (sum_mv[1] == -5):
-                angle = 90
-            elif (sum_mv[1] == 5):
-                angle = -90
-        else:
-            if (sum_mv[1] == -5):
-                angle = 45
-            elif (sum_mv[1] == 5):
-                angle = -45
+        angle = {
+            (0, -5): 90,
+            (0, 0): 0,
+            (0, 5): -90,
+            (5, -5): 45,
+            (5, 0): 0,
+            (5, 5): -45,
+        }
+        angle = angle[sum_mv]
     else:
-        if (sum_mv[1] == -5):
-            angle = -45
-        elif (sum_mv[1] == 5):
-            angle = 45
+        angle = {
+            (-5, -5): -45,
+            (-5, 0): 0,
+            (-5, 5): 45,
+        }
+        angle = angle[sum_mv]
     kk_img = pg.transform.rotozoom(kk_img, angle, 0.9)
     return kk_img
 
