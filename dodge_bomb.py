@@ -56,6 +56,9 @@ def main():
             if key_lst[key]:
                 sum_mv[0] += tpl[0]
                 sum_mv[1] += tpl[1]
+        if kk_rct.colliderect(bb_rct): # こうかとんと爆弾の衝突判定
+            print("ゲームオーバー")
+            return  # ゲームオーバー
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True): # こうかとんの画面内外の判定
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
