@@ -120,7 +120,7 @@ def main():
             gameover(screen) # ゲームオーバーの処理
             return 
 
-        key_lst = pg.key.get_pressed()
+        key_lst = pg.key.get_pressed() # ユーザーが押しているすべてのキーの状態を表すリスト。押されたキーをTrueとする
         sum_mv = [0, 0]
         for key, tpl in DELTA.items():
             if key_lst[key]:
