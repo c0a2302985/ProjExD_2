@@ -36,7 +36,10 @@ def gameover(screen: pg.Surface) -> None:
     画面に「Game Over」の文字を表示し、
     文字の両隣に泣いているこうかとんを表示する。
     """
-    screen.fill((0, 0, 0)) # ブラックアウト
+    b_o = pg.Surface((WIDTH, HEIGHT))
+    b_o.set_alpha(200)
+    b_o.fill((0, 0, 0))
+    screen.blit(b_o, (0, 0))
     fonto = pg.font.Font(None, 80)
     txt = fonto.render("Game Over", True, (255, 255, 255)) # Game Overのフォント
     txt_rect = txt.get_rect(center=(WIDTH/2, HEIGHT/2))
@@ -65,6 +68,34 @@ def accel() -> tuple[list, list]:
         bb_img.set_colorkey((0, 0, 0))
         bb_imgs[r-1] = bb_img
     return accs, bb_imgs
+
+def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
+    """
+    移動方向に応じてこうかとんの向きを調整する。
+    引数：こうかとんの移動量
+    戻り値：移動方向に応じたこうかとんの画像
+    """
+    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
+    angle = 0
+    if (0 <= sum_mv[0]):
+        kk_img = pg.transform.flip(kk_img, True, False)
+        if (sum_mv[0] == 0):
+            if (sum_mv[1] == -5):
+                angle = 90
+            elif (sum_mv[1] == 5):
+                angle = -90
+        else:
+            if (sum_mv[1] == -5):
+                angle = 45
+            elif (sum_mv[1] == 5):
+                angle = -45
+    else:
+        if (sum_mv[1] == -5):
+            angle = -45
+        elif (sum_mv[1] == 5):
+            angle = 45
+    kk_img = pg.transform.rotozoom(kk_img, angle, 0.9)
+    return kk_img
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -95,6 +126,8 @@ def main():
             if key_lst[key]:
                 sum_mv[0] += tpl[0]
                 sum_mv[1] += tpl[1]
+        kk_img = get_kk_img((0, 0))
+        kk_img = get_kk_img(tuple(sum_mv))
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True): # こうかとんの画面内外の判定
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
