@@ -57,14 +57,14 @@ def main():
                 sum_mv[0] += tpl[0]
                 sum_mv[1] += tpl[1]
         kk_rct.move_ip(sum_mv)
-        if check_bound(kk_rct) != (True, True):
+        if check_bound(kk_rct) != (True, True): # こうかとんの画面内外の判定
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
             kk_rct.move_ip(0, -sum_mv[1])
         screen.blit(kk_img, kk_rct)
         yoko, tate = check_bound(bb_rct)
-        if not yoko:
+        if not yoko: # 爆弾のx軸の画面内外の判定
             vx *= -1
-        if not tate:
+        if not tate: # 爆弾のy軸の画面内外の判定
             vy *= -1
         bb_rct.move_ip(vx, vy)
         screen.blit(bb_img, bb_rct)
