@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 
 import pygame as pg
 
@@ -29,6 +30,27 @@ def check_bound(rct: pg.rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
+def gameover(screen: pg.Surface) -> None:
+    """
+    引数：screen
+    画面に「Game Over」の文字を表示し、
+    文字の両隣に泣いているこうかとんを表示する。
+    """
+    screen.fill((0, 0, 0)) # ブラックアウト
+    fonto = pg.font.Font(None, 80)
+    txt = fonto.render("Game Over", True, (255, 255, 255)) # Game Overのフォント
+    txt_rect = txt.get_rect(center=(WIDTH/2, HEIGHT/2))
+    screen.blit(txt, txt_rect)
+    kk_cry_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 1.0) # 泣いているこうかとんの画像を読み込む
+    kk_cry_rct1 = kk_cry_img.get_rect()
+    kk_cry_rct1.center = WIDTH/3, HEIGHT/2
+    kk_cry_rct2 = kk_cry_img.get_rect()
+    kk_cry_rct2.center = WIDTH*2/3, HEIGHT/2
+    screen.blit(kk_cry_img, kk_cry_rct1)
+    screen.blit(kk_cry_img, kk_cry_rct2)
+    pg.display.update() # 画面の更新
+    time.sleep(5) # 5秒停止
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -49,6 +71,9 @@ def main():
             if event.type == pg.QUIT: 
                 return
         screen.blit(bg_img, [0, 0]) 
+        if kk_rct.colliderect(bb_rct): # こうかとんと爆弾の衝突判定
+            gameover(screen) # ゲームオーバーの処理
+            return 
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
@@ -56,9 +81,6 @@ def main():
             if key_lst[key]:
                 sum_mv[0] += tpl[0]
                 sum_mv[1] += tpl[1]
-        if kk_rct.colliderect(bb_rct): # こうかとんと爆弾の衝突判定
-            print("ゲームオーバー")
-            return  # ゲームオーバー
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True): # こうかとんの画面内外の判定
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
