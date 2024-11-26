@@ -12,9 +12,22 @@ DELTA = {
     pg.K_RIGHT: (5, 0),
     }
 # キーに応じた移動量の辞書
-
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+def check_bound(rct: pg.rect) -> tuple[bool, bool]:
+    """
+    引数で与えられたRectの位置が画面の中か外かを判定する
+    引数：こうかとんRectか爆弾Rect
+    戻り値：タプル（横方向判定結果、縦方向判定結果）
+    画面内ならTrue、画面外ならFalse
+    """
+    yoko = True
+    tate = True
+    if rct.left < 0 or WIDTH < rct.right:
+        yoko = False
+    if rct.top < 0 or  HEIGHT < rct.bottom:
+        tate = False
+    return yoko, tate
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -44,7 +57,15 @@ def main():
                 sum_mv[0] += tpl[0]
                 sum_mv[1] += tpl[1]
         kk_rct.move_ip(sum_mv)
+        if check_bound(kk_rct) != (True, True):
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
+            kk_rct.move_ip(0, -sum_mv[1])
         screen.blit(kk_img, kk_rct)
+        yoko, tate = check_bound(bb_rct)
+        if not yoko:
+            vx *= -1
+        if not tate:
+            vy *= -1
         bb_rct.move_ip(vx, vy)
         screen.blit(bb_img, bb_rct)
         pg.display.update()
